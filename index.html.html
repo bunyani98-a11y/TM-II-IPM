@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruang Belajar SPEMDA K-9 - Taruna Melati II IPM</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts (Fredoka & Plus Jakarta Sans for playful legible aesthetic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti CDN for Certificate Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            yellow: '#FFC837',
+                            orange: '#FF8008',
+                            teal: '#00B4DB',
+                            blue: '#0083B0',
+                            purple: '#7F00FF',
+                            pink: '#FF416C',
+                            green: '#11998e',
+                            lightgreen: '#38ef7d'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Fredoka', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F4F7FE;
+            overflow-x: hidden;
+        }
+        
+        .font-heading {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        .bounce-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .step-locked {
+            filter: grayscale(0.8);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #FFC837;
+            border-radius: 10px;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 128, 8, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(255, 200, 55, 0.8); }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        
+        /* Floating Badge Animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Top Header / Navigation -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-md transform rotate-3">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading font-bold text-xl sm:text-2xl text-slate-800 tracking-wide flex items-center gap-2">
+                        Ruang Belajar <span class="bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">SPEMDA K-9</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 font-medium">SMP Muhammadiyah 2 Surabaya • Fase D / Kelas 9</p>
+                </div>
+            </div>
+
+            <!-- Student Profile & Mode Switcher -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button onclick="toggleAudio()" id="audioToggleBtn" class="p-2.5 rounded-full bg-slate-100 hover:bg-yellow-100 text-slate-600 hover:text-orange-600 transition-colors" title="Buka/Tutup Suara Efek">
+                    <i id="audioIcon" class="fa-solid fa-volume-high"></i>
+                </button>
+
+                <div class="hidden sm:flex items-center gap-2 bg-yellow-50 border border-yellow-200 px-3 py-1.5 rounded-full text-xs font-semibold text-amber-800">
+                    <i class="fa-solid fa-user-graduate text-orange-500"></i>
+                    <span id="navStudentName">Siswa Aktif</span>
+                </div>
+
+                <button onclick="openTeacherModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl transition shadow flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-yellow-400"></i>
+                    <span>Dashboard Guru</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        
+        <!-- Hero Identity Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-500 via-blue-600 to-purple-600 text-white p-6 sm:p-8 shadow-xl">
+            <!-- Background Decorative SVGs -->
+            <div class="absolute -right-10 -top-10 opacity-20 pointer-events-none">
+                <svg width="300" height="300" viewBox="0 0 200 200" fill="currentColor">
+                    <path d="M42.7,-62.9C54.8,-52.5,63.9,-39.2,68.8,-24.5C73.7,-9.8,74.5,6.3,69.5,20.8C64.6,35.3,53.9,48.2,40.7,56.8C27.5,65.4,11.8,69.7,-3.7,74.8C-19.2,79.9,-34.5,85.8,-46.8,78.8C-59.1,71.8,-68.4,51.9,-73.4,32.2C-78.4,12.5,-79.1,-7,-73.3,-24C-67.5,-41,-55.2,-55.5,-40.8,-65.1C-26.4,-74.7,-9.9,-79.4,3.7,-84.5C17.3,-89.6,30.6,-73.3,42.7,-62.9Z" transform="translate(100 100)" />
+                </svg>
+            </div>
+
+            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="space-y-3 max-w-3xl">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="bg-yellow-400 text-slate-900 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+                            Pendidikan Kemuhammadiyahan
+                        </span>
+                        <span class="bg-white/20 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full">
+                            Fase D • Kelas 9
+                        </span>
+                        <span class="bg-emerald-400 text-slate-900 font-bold text-xs px-3 py-1 rounded-full flex items-center gap-1">
+                            <i class="fa-solid fa-sparkles"></i> Kurikulum Merdeka
+                        </span>
+                    </div>
+
+                    <h2 class="font-heading text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
+                        Jenjang Pengkaderan IPM: <span class="text-yellow-300">Taruna Melati II</span>
+                    </h2>
+
+                    <p class="text-white/90 text-sm sm:text-base leading-relaxed">
+                        Menguraikan, mengurutkan, dan mengevaluasi Jenjang Pengkaderan melalui Taruna Melati II pada organisasi Ikatan Pelajar Muhammadiyah (IPM).
+                    </p>
+
+                    <div class="pt-2 flex flex-wrap items-center gap-4 text-xs sm:text-sm text-white/90">
+                        <div class="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10">
+                            <i class="fa-solid fa-chalkboard-user text-yellow-300"></i>
+                            <span>Guru Pengampu: <strong>Drs. BUNYANI</strong></span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10">
+                            <i class="fa-solid fa-school text-cyan-300"></i>
+                            <span>SMP Muhammadiyah 2 Surabaya</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mascot Card -->
+                <div class="w-full md:w-auto flex flex-col items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center shadow-lg animate-float">
+                    <div class="w-20 h-20 bg-yellow-300 rounded-full flex items-center justify-center text-4xl text-orange-600 shadow-md mb-2">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <span class="font-heading text-lg font-bold text-yellow-300">Kader Melati II</span>
+                    <span class="text-xs text-white/80">Kader Kritis, Unggul & Berkemajuan</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Name Prompt Bar & Custom Objectives Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Student Setup Card -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-heading text-base font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-id-card text-orange-500"></i> Identity Kamu
+                    </h3>
+                    <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-medium">Siap Belajar</span>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Lengkap Siswa:</label>
+                    <input type="text" id="studentNameInput" placeholder="Masukkan Nama Kamu..." 
+                           class="w-full text-sm px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-400 focus:outline-none transition"
+                           value="Kader Muda SPEMDA" onchange="saveStudentName(this.value)">
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                    <span>Kelas: 9-A / Fase D</span>
+                    <span>No. Absen: Auto</span>
+                </div>
+            </div>
+
+            <!-- Learning Objectives Box (Dynamic) -->
+            <div class="md:col-span-2 bg-gradient-to-r from-amber-50 to-orange-50 p-5 rounded-2xl border border-amber-200 shadow-sm flex flex-col justify-between space-y-2">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-heading text-base font-bold text-amber-900 flex items-center gap-2">
+                            <i class="fa-solid fa-bullseye text-orange-600"></i> Tujuan Pembelajaran (TP)
+                        </h3>
+                        <span class="text-xs bg-orange-200 text-orange-900 font-bold px-2.5 py-0.5 rounded-full">
+                            Pembelajaran Mendalam
+                        </span>
+                    </div>
+                    <ul id="displayTPList" class="text-xs sm:text-sm text-slate-700 space-y-1.5 list-disc list-inside">
+                        <li>Menguraikan makna dan kriteria kader Taruna Melati II IPM secara komprehensif.</li>
+                        <li>Mengurutkan tahapan jenjang pengkaderan IPM dari TM I hingga TM IV secara sistematis.</li>
+                        <li>Mengevaluasi kasus kepemimpinan pelajar IPM berbasis studi kasus kritis dan numerasi sederhana.</li>
+                    </ul>
+                </div>
+                <p class="text-[11px] text-amber-700 italic">
+                    *Tujuan pembelajaran disesuaikan dengan Alur Tujuan Pembelajaran (ATP) Pendidikan Kemuhammadiyahan Kurikulum Merdeka.
+                </p>
+            </div>
+        </div>
+
+        <!-- Sequential Learning Steps Navigation Bar -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto custom-scrollbar">
+            <div class="flex items-center justify-between min-w-[700px] gap-2" id="learningStepsBar">
+                <!-- Dynamically populated by JS -->
+            </div>
+        </div>
+
+        <!-- Active Step Container -->
+        <div id="stepContentContainer" class="min-h-[450px]">
+            <!-- Content dynamically rendered via JavaScript based on current step -->
+        </div>
+
+        <!-- Bottom Navigation Controls -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <button id="prevStepBtn" onclick="navigateStep(-1)" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-arrow-left"></i> SEBELUMNYA
+            </button>
+
+            <div class="text-center">
+                <span id="stepProgressIndicator" class="font-heading text-sm font-bold text-slate-600">
+                    Langkah 1 dari 7
+                </span>
+                <div class="w-32 bg-slate-100 rounded-full h-2 mt-1 mx-auto overflow-hidden">
+                    <div id="progressBarFill" class="bg-gradient-to-r from-orange-400 to-yellow-400 h-2 rounded-full transition-all duration-300 w-[14%]"></div>
+                </div>
+            </div>
+
+            <button id="nextStepBtn" onclick="navigateStep(1)" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold text-sm shadow-md hover:shadow-lg transition flex items-center gap-2">
+                <span>SELANJUTNYA</span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- Teacher Dashboard Modal -->
+    <div id="teacherModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="bg-slate-800 text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-yellow-400 text-slate-900 rounded-xl flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading text-lg font-bold">Dashboard Guru Pengampu</h3>
+                        <p class="text-xs text-slate-300">Kelola Materi, Tujuan Pembelajaran & Rekap Nilai Siswa</p>
+                    </div>
+                </div>
+                <button onclick="closeTeacherModal()" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Teacher Tabs -->
+            <div class="bg-slate-100 border-b border-slate-200 flex overflow-x-auto text-xs sm:text-sm font-semibold">
+                <button onclick="switchTeacherTab('tpTab')" id="btn-tpTab" class="px-5 py-3 border-b-2 border-orange-500 text-orange-600 bg-white">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit TP & Materi
+                </button>
+                <button onclick="switchTeacherTab('quizTab')" id="btn-quizTab" class="px-5 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-clipboard-question mr-1"></i> Kelola Soal Kuis
+                </button>
+                <button onclick="switchTeacherTab('recapTab')" id="btn-recapTab" class="px-5 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-square-poll-vertical mr-1"></i> Rekap Nilai Siswa
+                </button>
+                <button onclick="switchTeacherTab('shareTab')" id="btn-shareTab" class="px-5 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-share-nodes mr-1"></i> Bagikan Link
+                </button>
+            </div>
+
+            <!-- Modal Body Content -->
+            <div class="p-6 overflow-y-auto flex-grow space-y-6 text-sm custom-scrollbar">
+                
+                <!-- Tab 1: Edit TP & Materi -->
+                <div id="tpTab" class="teacher-tab-content space-y-4">
+                    <h4 class="font-heading text-base font-bold text-slate-800 border-b pb-2">Ubah Tujuan Pembelajaran & Identitas</h4>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Guru Pengampu:</label>
+                            <input type="text" id="editTeacherName" class="w-full p-2.5 border rounded-xl" value="Drs. BUNYANI">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Sekolah:</label>
+                            <input type="text" id="editSchoolName" class="w-full p-2.5 border rounded-xl" value="SMP Muhammadiyah 2 Surabaya">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Tujuan Pembelajaran (Satu Per Baris):</label>
+                        <textarea id="editTPText" rows="4" class="w-full p-2.5 border rounded-xl text-xs sm:text-sm">Menguraikan makna dan kriteria kader Taruna Melati II IPM secara komprehensif.
+Mengurutkan tahapan jenjang pengkaderan IPM dari TM I hingga TM IV secara sistematis.
+Mengevaluasi kasus kepemimpinan pelajar IPM berbasis studi kasus kritis dan numerasi sederhana.</textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Ringkasan Pengantar Materi Eksplorasi:</label>
+                        <textarea id="editIntroText" rows="3" class="w-full p-2.5 border rounded-xl text-xs sm:text-sm">Taruna Melati II (TM II) adalah jenjang pengkaderan tingkat menengah IPM yang bertujuan membentuk kader berkesadaran kritis, berakhlak mulia, serta tanggap terhadap isu-isu keumatan dan kebangsaan di lingkungan sekolah/daerah.</textarea>
+                    </div>
+
+                    <button onclick="saveTeacherTP()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-xl shadow transition">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                    </button>
+                </div>
+
+                <!-- Tab 2: Edit Quiz Questions -->
+                <div id="quizTab" class="teacher-tab-content space-y-4 hidden">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h4 class="font-heading text-base font-bold text-slate-800">Daftar Soal Kuis Studi Kasus (TKA)</h4>
+                        <span class="text-xs text-slate-500">Tersimpan secara lokal</span>
+                    </div>
+                    
+                    <div id="teacherQuizList" class="space-y-4">
+                        <!-- Populated dynamic list -->
+                    </div>
+
+                    <button onclick="resetDefaultQuiz()" class="text-xs text-slate-500 hover:text-red-500 underline">
+                        Kembalikan Soal ke Default
+                    </button>
+                </div>
+
+                <!-- Tab 3: Rekap Nilai Siswa -->
+                <div id="recapTab" class="teacher-tab-content space-y-4 hidden">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h4 class="font-heading text-base font-bold text-slate-800">Rekap Hasil Belajar Siswa</h4>
+                        <button onclick="clearStudentRecap()" class="text-xs bg-red-100 text-red-600 px-3 py-1 rounded-lg hover:bg-red-200">
+                            Hapus Data Rekap
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto border rounded-2xl">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 border-b text-slate-700">
+                                <tr>
+                                    <th class="p-3">Nama Siswa</th>
+                                    <th class="p-3">Nilai Kuis</th>
+                                    <th class="p-3">Skor Game</th>
+                                    <th class="p-3">Status Sertifikat</th>
+                                    <th class="p-3">Waktu Selesai</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentRecapTableBody" class="divide-y text-slate-600">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Bagikan Link -->
+                <div id="shareTab" class="teacher-tab-content space-y-4 hidden">
+                    <h4 class="font-heading text-base font-bold text-slate-800 border-b pb-2">Bagikan Media Pembelajaran Ini</h4>
+                    <p class="text-slate-600 text-xs">Salin link berikut untuk dibagikan kepada siswa melalui WhatsApp / Google Classroom:</p>
+                    
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="shareUrlInput" readonly class="w-full p-2.5 bg-slate-100 border rounded-xl text-xs text-slate-700 font-mono">
+                        <button onclick="copyShareLink()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+                            <i class="fa-solid fa-copy"></i> Salin Link
+                        </button>
+                    </div>
+
+                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-2xl text-xs text-yellow-800 flex items-start gap-3">
+                        <i class="fa-solid fa-circle-info text-yellow-600 text-lg mt-0.5"></i>
+                        <div>
+                            <strong>Catatan Guru:</strong> Website ini dapat diakses secara langsung oleh siswa melalui browser desktop maupun HP. Progres belajar siswa akan tersimpan pada sesi browser masing-masing.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Notification Toast -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white text-xs sm:text-sm px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMessage">Pesan Notifikasi</span>
+    </div>
+
+    <script>
+        // Core Application State
+        const appState = {
+            teacherName: "Drs. BUNYANI",
+            schoolName: "SMP Muhammadiyah 2 Surabaya",
+            studentName: "Kader Muda SPEMDA",
+            currentStep: 0,
+            unlockedSteps: [0], // Step 0 unlocked by default
+            tpList: [
+                "Menguraikan makna dan kriteria kader Taruna Melati II IPM secara komprehensif.",
+                "Mengurutkan tahapan jenjang pengkaderan IPM dari TM I hingga TM IV secara sistematis.",
+                "Mengevaluasi kasus kepemimpinan pelajar IPM berbasis studi kasus kritis dan numerasi sederhana."
+            ],
+            audioEnabled: true,
+            
+            // LKM Answers
+            lkmData: {
+                pengertian: "",
+                studiKasus: "",
+                orderedSequence: ["TM I", "TM II", "TM III", "TM IV"]
+            },
+
+            // Quiz State
+            quizAnswers: {},
+            quizSubmitted: false,
+            quizScore: 0,
+
+            // Game State
+            gameScore: 0,
+            gameCompleted: false,
+
+            // Reflection State
+            reflectionMood: "senang",
+            reflectionText: "",
+            reflectionRating: 5,
+
+            // Storage for Recaps
+            recapList: []
+        };
+
+        // Steps Configuration
+        const learningSteps = [
+            { id: 0, title: "Eksplorasi Materi", icon: "fa-book-open", color: "from-blue-500 to-cyan-500" },
+            { id: 1, title: "Pembelajaran Mendalam", icon: "fa-brain", color: "from-purple-500 to-pink-500" },
+            { id: 2, title: "Pengalaman Belajar", icon: "fa-laptop-code", color: "from-orange-500 to-amber-500" },
+            { id: 3, title: "Kuis Interaktif", icon: "fa-list-check", color: "from-emerald-500 to-teal-500" },
+            { id: 4, title: "Game Edukatif", icon: "fa-gamepad", color: "from-rose-500 to-red-500" },
+            { id: 5, title: "Refleksi Diri", icon: "fa-face-smile", color: "from-indigo-500 to-blue-500" },
+            { id: 6, title: "Evaluasi & Sertifikat", icon: "fa-certificate", color: "from-yellow-500 to-amber-600" }
+        ];
+
+        // Default Quiz Questions (Equal Length Options, Case Study, TKA/Kurikulum Merdeka standards)
+        let quizQuestions = [
+            {
+                id: 1,
+                type: "Kasus Berpikir Kritis",
+                question: "Pimpinan Daerah IPM Kota Surabaya akan merancang Pelatihan Kader Taruna Melati II (TM II). Peserta dikhususkan bagi pelajar SMP/SMA yang telah LULUS Taruna Melati I dan aktif di ranting. Berdasarkan struktur jenjang pengkaderan IPM, apa tujuan utama diselenggarakannya Taruna Melati II?",
+                options: [
+                    "A. Membentuk kader dasar yang baru pertama kali mengenal ideologi Muhammadiyah.",
+                    "B. Membentuk kader menengah yang memiliki kesadaran kritis dan jiwa kepemimpinan.",
+                    "C. Membentuk instruktur tingkat nasional yang merumuskan kurikulum pengkaderan.",
+                    "D. Membentuk pemimpin wilayah yang fokus pada analisis kebijakan publik keumatan."
+                ],
+                correctAnswer: 1,
+                explanation: "Taruna Melati II (TM II) bertujuan membentuk kader tingkat menengah dengan fokus pada penguatan kesadaran kritis, kemandirian, dan kapasitas manajemen organisasi pelajar."
+            },
+            {
+                id: 2,
+                type: "Soal Literasi & Urutan Cadre",
+                question: "Perhatikan tahapan jenjang pengkaderan IPM berikut:\n1. Taruna Melati III (TM III)\n2. Taruna Melati I (TM I)\n3. Taruna Melati IV (TM IV)\n4. Taruna Melati II (TM II)\nUrutan jenjang pengkaderan IPM dari tingkat paling dasar hingga tingkat utama nasional yang benar adalah...",
+                options: [
+                    "A. Taruna Melati I (2) → Taruna Melati II (4) → Taruna Melati III (1) → Taruna Melati IV (3)",
+                    "B. Taruna Melati II (4) → Taruna Melati I (2) → Taruna Melati III (1) → Taruna Melati IV (3)",
+                    "C. Taruna Melati I (2) → Taruna Melati III (1) → Taruna Melati II (4) → Taruna Melati IV (3)",
+                    "D. Taruna Melati IV (3) → Taruna Melati III (1) → Taruna Melati II (4) → Taruna Melati I (2)"
+                ],
+                correctAnswer: 0,
+                explanation: "Urutan resmi pengkaderan utama IPM adalah: TM I (Dasar/Ranting) -> TM II (Menengah/Daerah) -> TM III (Lanjut/Wilayah) -> TM IV (Utama/Pusat)."
+            },
+            {
+                id: 3,
+                type: "Soal Numerasi & Evaluasi Data",
+                question: "Data Peserta TM II SPEMDA: Dari 40 peserta yang mendaftar, 30 orang dinyatakan lulus pada tahap evaluasi pertama, 6 orang lulus bersyarat, dan sisanya tidak lulus. Berapa persentase peserta yang berhasil LULUS MURNI pada tahap pertama tersebut?",
+                options: [
+                    "A. Persentase kelulusan murni mencapai tepat 60% dari total pendaftar.",
+                    "B. Persentase kelulusan murni mencapai tepat 65% dari total pendaftar.",
+                    "C. Persentase kelulusan murni mencapai tepat 75% dari total pendaftar.",
+                    "D. Persentase kelulusan murni mencapai tepat 80% dari total pendaftar."
+                ],
+                correctAnswer: 2,
+                explanation: "Perhitungan Numerasi: (30 / 40) x 100% = 0.75 x 100% = 75%. Jadi persentase lulus murni adalah 75%."
+            },
+            {
+                id: 4,
+                type: "Studi Kasus Pemecahan Masalah",
+                question: "Dalam kegiatan TM II, tim panitia menghadapi masalah yaitu beberapa peserta kurang aktif berdiskusi saat sesi analisis sosial pelajar. Sebagai kader muda IPM yang berfikir kritis, tindakan paling tepat yang sesuai dengan nilai TM II adalah...",
+                options: [
+                    "A. Membiarkan peserta yang pasif agar acara cepat selesai sesuai dengan rundown jadwal.",
+                    "B. Mengeluarkan peserta yang pasif dari ruangan agar tidak mengganggu jalannya kegiatan.",
+                    "C. Menggunakan metode diskusi kelompok kecil dan studi kasus interaktif yang relevan.",
+                    "D. Memberikan denda hukuman fisik kepada peserta yang tidak mau berbicara saat forum."
+                ],
+                correctAnswer: 2,
+                explanation: "Prinsip Taruna Melati II menekankan pendekatan partisipatif, dialogis, dan inklusif untuk memicu pemikiran kritis pelajar melalui metode yang menyenangkan."
+            }
+        ];
+
+        // Audio Synthesizer for SFX (No external link dependency)
+        const playSound = (type) => {
+            if (!appState.audioEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'click') {
+                    osc.frequency.setValueAtTime(400, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.05);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.05);
+                } else if (type === 'success') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                } else if (type === 'lock') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, ctx.currentTime);
+                    osc.frequency.setValueAtTime(120, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.15);
+                }
+            } catch (e) {
+                // Silent catch if audio not allowed
+            }
+        };
+
+        const toggleAudio = () => {
+            appState.audioEnabled = !appState.audioEnabled;
+            const icon = document.getElementById('audioIcon');
+            if (appState.audioEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                showToast('Suara Efek Aktif 🎵');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark';
+                showToast('Suara Efek Dikecilkan 🔇');
+            }
+        };
+
+        // Toast Notification System
+        const showToast = (msg, isSuccess = true) => {
+            const toast = document.getElementById('toastNotification');
+            const icon = document.getElementById('toastIcon');
+            const message = document.getElementById('toastMessage');
+
+            message.textContent = msg;
+            icon.className = isSuccess ? 'fa-solid fa-circle-check text-emerald-400 text-lg' : 'fa-solid fa-triangle-exclamation text-amber-400 text-lg';
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        };
+
+        // Save Student Name
+        const saveStudentName = (name) => {
+            appState.studentName = name.trim() || "Kader Muda SPEMDA";
+            document.getElementById('navStudentName').textContent = appState.studentName;
+        };
+
+        // Render Learning Step Progress Bar
+        const renderStepBar = () => {
+            const container = document.getElementById('learningStepsBar');
+            container.innerHTML = '';
+
+            learningSteps.forEach((step, idx) => {
+                const isUnlocked = appState.unlockedSteps.includes(step.id);
+                const isActive = appState.currentStep === step.id;
+
+                const stepBtn = document.createElement('button');
+                stepBtn.onclick = () => {
+                    if (isUnlocked) {
+                        playSound('click');
+                        appState.currentStep = step.id;
+                        renderCurrentStep();
+                    } else {
+                        playSound('lock');
+                        showToast('Selesaikan langkah sebelumnya terlebih dahulu! 🔒', false);
+                    }
+                };
+
+                let btnClass = `flex items-center gap-2 px-3 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap `;
+                if (isActive) {
+                    btnClass += `bg-gradient-to-r ${step.color} text-white border-transparent shadow-md scale-105`;
+                } else if (isUnlocked) {
+                    btnClass += `bg-white text-slate-700 border-slate-200 hover:bg-slate-50`;
+                } else {
+                    btnClass += `bg-slate-100 text-slate-400 border-slate-200 step-locked`;
+                }
+
+                stepBtn.className = btnClass;
+                stepBtn.innerHTML = `
+                    <div class="w-6 h-6 rounded-lg flex items-center justify-center text-xs ${isActive ? 'bg-white/20' : isUnlocked ? 'bg-orange-100 text-orange-600' : 'bg-slate-200 text-slate-500'}">
+                        ${isUnlocked ? `<i class="fa-solid ${step.icon}"></i>` : '<i class="fa-solid fa-lock"></i>'}
+                    </div>
+                    <span>${idx + 1}. ${step.title}</span>
+                `;
+
+                container.appendChild(stepBtn);
+            });
+
+            // Update Progress Bar & Buttons
+            document.getElementById('stepProgressIndicator').textContent = `Langkah ${appState.currentStep + 1} dari ${learningSteps.length}`;
+            const fillPct = ((appState.currentStep + 1) / learningSteps.length) * 100;
+            document.getElementById('progressBarFill').style.width = `${fillPct}%`;
+
+            document.getElementById('prevStepBtn').disabled = appState.currentStep === 0;
+            
+            const nextBtn = document.getElementById('nextStepBtn');
+            if (appState.currentStep === learningSteps.length - 1) {
+                nextBtn.innerHTML = `<span>SELESAI</span> <i class="fa-solid fa-flag-checkered"></i>`;
+            } else {
+                nextBtn.innerHTML = `<span>SELANJUTNYA</span> <i class="fa-solid fa-arrow-right"></i>`;
+            }
+        };
+
+        const unlockNextStep = () => {
+            const nextIdx = appState.currentStep + 1;
+            if (nextIdx < learningSteps.length && !appState.unlockedSteps.includes(nextIdx)) {
+                appState.unlockedSteps.push(nextIdx);
+            }
+        };
+
+        const navigateStep = (direction) => {
+            const target = appState.currentStep + direction;
+            if (target >= 0 && target < learningSteps.length) {
+                if (direction > 0 && !appState.unlockedSteps.includes(target)) {
+                    playSound('lock');
+                    showToast('Harap selesaikan aktivitas pada modul ini terlebih dahulu!', false);
+                    return;
+                }
+                playSound('click');
+                appState.currentStep = target;
+                renderCurrentStep();
+            }
+        };
+
+        // Core Step Content Renderer
+        const renderCurrentStep = () => {
+            renderStepBar();
+            const container = document.getElementById('stepContentContainer');
+            container.innerHTML = '';
+
+            switch (appState.currentStep) {
+                case 0:
+                    renderEksplorasiStep(container);
+                    break;
+                case 1:
+                    renderDeepLearningStep(container);
+                    break;
+                case 2:
+                    renderLKMStep(container);
+                    break;
+                case 3:
+                    renderQuizStep(container);
+                    break;
+                case 4:
+                    renderGameStep(container);
+                    break;
+                case 5:
+                    renderReflectionStep(container);
+                    break;
+                case 6:
+                    renderEvaluasiStep(container);
+                    break;
+            }
+            window.scrollTo({ top: 250, behavior: 'smooth' });
+        };
+
+        /* ---------------- STEP 0: EKSPLORASI MATERI ---------------- */
+        function renderEksplorasiStep(container) {
+            unlockNextStep(); // Automatically unlock next for reading
+            container.innerHTML = `
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center gap-3 border-b pb-4">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading text-xl font-bold text-slate-800">Modul 1: Eksplorasi Materi Taruna Melati II</h3>
+                            <p class="text-xs sm:text-sm text-slate-500">Pahami konsep dasar, jenjang, dan nilai kepemimpinan kader IPM.</p>
+                        </div>
+                    </div>
+
+                    <!-- Visual Infographic Cadre Hierarchy -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-2 hover:border-blue-400 transition">
+                            <span class="bg-blue-200 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Tingkat 1</span>
+                            <h4 class="font-heading font-bold text-blue-900">Taruna Melati I</h4>
+                            <p class="text-xs text-slate-600">Pengkaderan Dasar di Ranting / Sekolah (Pemicu Kesadaran Diri).</p>
+                        </div>
+                        <div class="bg-gradient-to-b from-orange-50 to-amber-50 p-4 rounded-2xl border-2 border-orange-400 text-center space-y-2 shadow-sm scale-105">
+                            <span class="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Fokus Utama (TM II)</span>
+                            <h4 class="font-heading font-bold text-orange-900 text-base">Taruna Melati II</h4>
+                            <p class="text-xs text-amber-900 font-medium">Pengkaderan Menengah Daerah (Penguatan Kritis & Organisasi Pelajar).</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-2 hover:border-purple-400 transition">
+                            <span class="bg-purple-200 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Tingkat 3</span>
+                            <h4 class="font-heading font-bold text-purple-900">Taruna Melati III</h4>
+                            <p class="text-xs text-slate-600">Pengkaderan Lanjut Wilayah (Analisis Kebijakan & Strategi).</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-2 hover:border-emerald-400 transition">
+                            <span class="bg-emerald-200 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Tingkat 4</span>
+                            <h4 class="font-heading font-bold text-emerald-900">Taruna Melati IV</h4>
+                            <p class="text-xs text-slate-600">Pengkaderan Utama Pusat (Instruktur Nasional & Ideologis).</p>
+                        </div>
+                    </div>
+
+                    <!-- Material Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-cyan-50/60 p-5 rounded-2xl border border-cyan-200 space-y-3">
+                            <h4 class="font-heading font-bold text-cyan-900 flex items-center gap-2 text-base">
+                                <i class="fa-solid fa-bullseye text-cyan-600"></i> Tujuan Utama Taruna Melati II
+                            </h4>
+                            <ul class="text-xs sm:text-sm text-slate-700 space-y-2 list-disc list-inside">
+                                <li>Membentuk kader IPM yang memiliki kesadaran kritis terhadap fenomena sosial di kalangan pelajar.</li>
+                                <li>Mengembangkan keterampilan manajemen organisasi, wawasan keislaman, dan kemandirian.</li>
+                                <li>Mendorong aksi nyata gerakan dakwah amar ma'ruf nahi munkar yang inklusif dan kreatif.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-amber-50/60 p-5 rounded-2xl border border-amber-200 space-y-3">
+                            <h4 class="font-heading font-bold text-amber-900 flex items-center gap-2 text-base">
+                                <i class="fa-solid fa-star text-amber-600"></i> Karakter Kader TM II
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-white p-2.5 rounded-xl border border-amber-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-brain text-orange-500"></i>
+                                    <span>Berpikir Kritis</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl border border-amber-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-hands-holding-child text-emerald-500"></i>
+                                    <span>Berakhlak Mulia</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl border border-amber-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-users-gear text-blue-500"></i>
+                                    <span>Kolektif-Kolegial</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl border border-amber-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-rocket text-purple-500"></i>
+                                    <span>Inovatif & Kreatif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ---------------- STEP 1: PEMBELAJARAN MENDALAM ---------------- */
+        function renderDeepLearningStep(container) {
+            unlockNextStep();
+            container.innerHTML = `
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center gap-3 border-b pb-4">
+                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading text-xl font-bold text-slate-800">Modul 2: Prinsip Pembelajaran Mendalam (Deep Learning)</h3>
+                            <p class="text-xs sm:text-sm text-slate-500">3 Pilar Utama Pembelajaran Mendalam dalam Kurikulum Merdeka di IPM.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Mindful -->
+                        <div class="bg-gradient-to-b from-purple-50 to-indigo-50 p-6 rounded-3xl border border-purple-200 text-center space-y-3 bounce-hover">
+                            <div class="w-16 h-16 bg-purple-600 text-white rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-md">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <h4 class="font-heading font-bold text-purple-900 text-lg">1. Mindful Learning</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Memahami materi Taruna Melati II dengan kesadaran penuh, tidak sekadar menghafal, tetapi meresapi arti penting kaderisasi bagi diri sendiri.
+                            </p>
+                        </div>
+
+                        <!-- Meaningful -->
+                        <div class="bg-gradient-to-b from-blue-50 to-cyan-50 p-6 rounded-3xl border border-blue-200 text-center space-y-3 bounce-hover">
+                            <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-md">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+                            <h4 class="font-heading font-bold text-blue-900 text-lg">2. Meaningful Learning</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Menghubungkan teori kepemimpinan IPM dengan pengalaman nyata kehidupan sekolah, seperti penyelesaian konflik dan literasi digital pelajar.
+                            </p>
+                        </div>
+
+                        <!-- Joyful -->
+                        <div class="bg-gradient-to-b from-amber-50 to-yellow-50 p-6 rounded-3xl border border-amber-200 text-center space-y-3 bounce-hover">
+                            <div class="w-16 h-16 bg-amber-500 text-white rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-md">
+                                <i class="fa-solid fa-face-laugh-beam"></i>
+                            </div>
+                            <h4 class="font-heading font-bold text-amber-900 text-lg">3. Joyful Learning</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Mengikuti proses belajar melalui simulasi game edukatif, kuis studi kasus interaktif, serta ruang refleksi yang menyenangkan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3 text-xs text-emerald-800">
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-xl"></i>
+                        <div>
+                            <strong>Implementasi di SPEMDA:</strong> Pendekatan ini membantu kamu mengasah literasi saintifik, numerasi, dan analisis kritis yang diperlukan dalam Tes Kemampuan Akademik (TKA).
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ---------------- STEP 2: PENGALAMAN BELAJAR (LKM DIGITAL) ---------------- */
+        function renderLKMStep(container) {
+            container.innerHTML = `
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center gap-3 border-b pb-4">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading text-xl font-bold text-slate-800">Modul 3: Lembar Kerja Murid (LKM) Digital</h3>
+                            <p class="text-xs sm:text-sm text-slate-500">Isi lembar kerja interaktif berikut untuk menguji pemahaman awal kamu.</p>
+                        </div>
+                    </div>
+
+                    <!-- Question 1: Ordering -->
+                    <div class="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <label class="block font-heading font-bold text-slate-800 text-sm">
+                            Tugas 1: Susun kembali Jenjang Pengkaderan IPM berikut agar berurutan dari yang paling dasar (TM I) hingga utama (TM IV):
+                        </label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="lkmSequenceContainer">
+                            <!-- Drag/Click Reordering Buttons -->
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Essay Case Study -->
+                    <div class="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <label class="block font-heading font-bold text-slate-800 text-sm">
+                            Tugas 2: Menguraikan & Mengevaluasi Studi Kasus
+                        </label>
+                        <p class="text-xs text-slate-600">
+                            "Sebagai pengurus IPM SMP Muhammadiyah 2 Surabaya yang telah mengikuti pelatihan Taruna Melati II, kamu diminta merancang 1 kegiatan inovatif untuk mengatasi kebiasaan bermain game berlebihan saat jam istirahat sekolah. Tuliskan ide solusimu!"
+                        </p>
+                        <textarea id="lkmStudiKasusInput" rows="4" 
+                                  placeholder="Tuliskan analisis dan solusimu di sini (minimal 20 kata)..."
+                                  class="w-full text-xs sm:text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-400 focus:outline-none transition">${appState.lkmData.studiKasus}</textarea>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2">
+                        <span id="lkmStatus" class="text-xs font-semibold text-slate-500">
+                            ${appState.unlockedSteps.includes(3) ? '✅ LKM Sudah Disimpan & Divalidasi' : '⚠️ Selesaikan LKM untuk membuka Kuis'}
+                        </span>
+                        <button onclick="submitLKM()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center gap-2 text-xs sm:text-sm">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan LKM Digital
+                        </button>
+                    </div>
+                </div>
+            `;
+            renderLKMSequenceButtons();
+        }
+
+        function renderLKMSequenceButtons() {
+            const container = document.getElementById('lkmSequenceContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            appState.lkmData.orderedSequence.forEach((item, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `p-3 rounded-xl bg-white border-2 border-amber-300 text-amber-900 font-bold text-xs shadow-sm flex items-center justify-between hover:bg-amber-50 transition`;
+                btn.innerHTML = `
+                    <span>${idx + 1}. ${item}</span>
+                    <i class="fa-solid fa-arrows-up-down text-amber-500"></i>
+                `;
+                btn.onclick = () => {
+                    // Shift item
+                    const nextIdx = (idx + 1) % appState.lkmData.orderedSequence.length;
+                    const temp = appState.lkmData.orderedSequence[idx];
+                    appState.lkmData.orderedSequence[idx] = appState.lkmData.orderedSequence[nextIdx];
+                    appState.lkmData.orderedSequence[nextIdx] = temp;
+                    playSound('click');
+                    renderLKMSequenceButtons();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function submitLKM() {
+            const text = document.getElementById('lkmStudiKasusInput').value.trim();
+            if (text.length < 15) {
+                playSound('lock');
+                showToast('Mohon isi uraian studi kasus dengan lebih lengkap (min 15 karakter)!', false);
+                return;
+            }
+
+            appState.lkmData.studiKasus = text;
+            unlockNextStep(); // Unlock Quiz Step!
+            playSound('success');
+            showToast('LKM Digital Berhasil Disimpan! Modul Kuis Terbuka 🎉');
+            renderCurrentStep();
+        }
+
+        /* ---------------- STEP 3: KUIS INTERAKTIF ---------------- */
+        function renderQuizStep(container) {
+            let html = `
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between border-b pb-4 flex-wrap gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-heading text-xl font-bold text-slate-800">Modul 4: Kuis Interaktif (TKA Kurikulum Merdeka)</h3>
+                                <p class="text-xs sm:text-sm text-slate-500">Soal studi kasus, berpikir kritis, literasi, dan numerasi.</p>
+                            </div>
+                        </div>
+
+                        ${appState.quizSubmitted ? `
+                            <div class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-4 py-2 rounded-2xl text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-trophy text-amber-500"></i> Nilai Kuis: ${appState.quizScore} / 100
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="space-y-6">
+            `;
+
+            quizQuestions.forEach((q, qIndex) => {
+                const selectedOpt = appState.quizAnswers[q.id];
+                html += `
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="bg-emerald-200 text-emerald-900 font-bold text-xs px-3 py-1 rounded-full">
+                                Soal ${qIndex + 1} • ${q.type}
+                            </span>
+                        </div>
+
+                        <p class="font-semibold text-slate-800 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                            ${q.question}
+                        </p>
+
+                        <div class="space-y-2">
+                `;
+
+                q.options.forEach((opt, optIndex) => {
+                    let optStyle = `bg-white border-slate-200 text-slate-700 hover:bg-slate-100`;
+                    
+                    if (selectedOpt === optIndex) {
+                        optStyle = `bg-emerald-50 border-emerald-500 text-emerald-900 font-bold ring-2 ring-emerald-300`;
+                    }
+
+                    if (appState.quizSubmitted) {
+                        if (optIndex === q.correctAnswer) {
+                            optStyle = `bg-emerald-100 border-emerald-600 text-emerald-900 font-bold`;
+                        } else if (selectedOpt === optIndex && selectedOpt !== q.correctAnswer) {
+                            optStyle = `bg-red-100 border-red-400 text-red-900`;
+                        }
+                    }
+
+                    html += `
+                        <button onclick="selectQuizOption(${q.id}, ${optIndex})" 
+                                ${appState.quizSubmitted ? 'disabled' : ''}
+                                class="w-full text-left p-3 rounded-xl border text-xs sm:text-sm transition flex items-center justify-between ${optStyle}">
+                            <span>${opt}</span>
+                            ${appState.quizSubmitted && optIndex === q.correctAnswer ? '<i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>' : ''}
+                        </button>
+                    `;
+                });
+
+                html += `</div>`;
+
+                // Explanation Box after submit
+                if (appState.quizSubmitted) {
+                    html += `
+                        <div class="mt-3 p-3.5 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 space-y-1">
+                            <div class="font-bold flex items-center gap-1 text-blue-700">
+                                <i class="fa-solid fa-lightbulb"></i> Pembahasan Konseptual:
+                            </div>
+                            <p>${q.explanation}</p>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            });
+
+            html += `
+                    </div>
+
+                    <div class="flex items-center justify-between border-t pt-4">
+                        <span class="text-xs text-slate-500 font-medium">
+                            ${Object.keys(appState.quizAnswers).length} dari ${quizQuestions.length} Soal Terjawab
+                        </span>
+                        
+                        ${!appState.quizSubmitted ? `
+                            <button onclick="submitQuiz()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-2.5 rounded-xl shadow transition text-xs sm:text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> Kirim Jawaban Kuis
+                            </button>
+                        ` : `
+                            <button onclick="resetQuiz()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs transition">
+                                Coba Kuis Lagi
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function selectQuizOption(qId, optIdx) {
+            if (appState.quizSubmitted) return;
+            playSound('click');
+            appState.quizAnswers[qId] = optIdx;
+            renderQuizStep(document.getElementById('stepContentContainer'));
+        }
+
+        function submitQuiz() {
+            if (Object.keys(appState.quizAnswers).length < quizQuestions.length) {
+                playSound('lock');
+                showToast('Harap jawab semua soal kuis terlebih dahulu!', false);
+                return;
+            }
+
+            let correctCount = 0;
+            quizQuestions.forEach(q => {
+                if (appState.quizAnswers[q.id] === q.correctAnswer) {
+                    correctCount++;
+                }
+            });
+
+            appState.quizScore = Math.round((correctCount / quizQuestions.length) * 100);
+            appState.quizSubmitted = true;
+            
+            unlockNextStep(); // Unlock Game step
+            playSound('success');
+            showToast(`Kuis Selesai! Skor Kamu: ${appState.quizScore}/100 🎯`);
+            renderQuizStep(document.getElementById('stepContentContainer'));
+        }
+
+        function resetQuiz() {
+            appState.quizAnswers = {};
+            appState.quizSubmitted = false;
+            appState.quizScore = 0;
+            renderQuizStep(document.getElementById('stepContentContainer'));
+        }
+
+        /* ---------------- STEP 4: GAME EDUKATIF ---------------- */
+        let gameCards = [];
+        let selectedGameCards = [];
+
+        function renderGameStep(container) {
+            container.innerHTML = `
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between border-b pb-4 flex-wrap gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-heading text-xl font-bold text-slate-800">Modul 5: Mini-Game "Misi Kader Melati II"</h3>
+                                <p class="text-xs sm:text-sm text-slate-500">Pilih dan urutkan nilai-nilai kepemimpinan Taruna Melati II secara tepat!</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-100 text-amber-800 font-bold px-4 py-2 rounded-2xl text-xs sm:text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-star text-amber-500 text-lg"></i> Skor Game: <span id="gameScoreDisplay">${appState.gameScore}</span> Poin
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50/50 p-4 rounded-2xl border border-rose-200 text-xs text-rose-900 flex items-center gap-3">
+                        <i class="fa-solid fa-circle-info text-rose-500 text-lg"></i>
+                        <div>
+                            <strong>Instruksi Game:</strong> Klik kartu yang menunjukkan <strong>Prinsip & Sikap Kader Taruna Melati II</strong> yang BENAR! Hindari kartu sikap pasif/negatif.
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="gameGrid">
+                        <!-- Dynamic Game Cards -->
+                    </div>
+
+                    <div class="flex items-center justify-between border-t pt-4">
+                        <span id="gameStatusText" class="text-xs font-semibold text-slate-600">
+                            Pilih kartu berkarakter positif!
+                        </span>
+                        <button onclick="initGame()" class="bg-rose-500 hover:bg-rose-600 text-white font-bold px-5 py-2.5 rounded-xl shadow transition text-xs sm:text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> Main Lagi
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            initGame();
+        }
+
+        function initGame() {
+            selectedGameCards = [];
+            appState.gameScore = 0;
+            const scoreDisp = document.getElementById('gameScoreDisplay');
+            if (scoreDisp) scoreDisp.textContent = '0';
+
+            const rawCards = [
+                { id: 1, title: "Berpikir Kritis", isCorrect: true, icon: "fa-brain" },
+                { id: 2, title: "Apatis Terhadap Teman", isCorrect: false, icon: "fa-ban" },
+                { id: 3, title: "Kesadaran Tauhid", isCorrect: true, icon: "fa-mosque" },
+                { id: 4, title: "Individualis", isCorrect: false, icon: "fa-user-xmark" },
+                { id: 5, title: "Manajemen Organisasi", isCorrect: true, icon: "fa-list-check" },
+                { id: 6, title: "Melanggar Aturan Sekolah", isCorrect: false, icon: "fa-triangle-exclamation" },
+                { id: 7, title: "Kolektif-Kolegial", isCorrect: true, icon: "fa-users" },
+                { id: 8, title: "Suka Menyebar Hoaks", isCorrect: false, icon: "fa-bug" }
+            ];
+
+            // Shuffle cards
+            gameCards = rawCards.sort(() => Math.random() - 0.5);
+            renderGameGrid();
+        }
+
+        function renderGameGrid() {
+            const grid = document.getElementById('gameGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            gameCards.forEach(card => {
+                const isSelected = selectedGameCards.includes(card.id);
+                const btn = document.createElement('button');
+                
+                let cardClass = `p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center justify-center gap-2 transition duration-200 h-28 bounce-hover `;
+                if (isSelected) {
+                    if (card.isCorrect) {
+                        cardClass += `bg-emerald-500 text-white border-emerald-600 shadow-md scale-105`;
+                    } else {
+                        cardClass += `bg-red-500 text-white border-red-600 shadow-md scale-95`;
+                    }
+                } else {
+                    cardClass += `bg-white text-slate-800 border-slate-200 hover:border-orange-300`;
+                }
+
+                btn.className = cardClass;
+                btn.innerHTML = `
+                    <i class="fa-solid ${card.icon} text-2xl ${isSelected ? 'text-white' : 'text-orange-500'}"></i>
+                    <span>${card.title}</span>
+                `;
+
+                btn.onclick = () => handleGameCardClick(card);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleGameCardClick(card) {
+            if (selectedGameCards.includes(card.id)) return;
+            
+            selectedGameCards.push(card.id);
+            if (card.isCorrect) {
+                playSound('success');
+                appState.gameScore += 25;
+            } else {
+                playSound('lock');
+                appState.gameScore = Math.max(0, appState.gameScore - 10);
+            }
+
+            const scoreDisp = document.getElementById('gameScoreDisplay');
+            if (scoreDisp) scoreDisp.textContent = appState.gameScore;
+
+            renderGameGrid();
+
+            // Check if win condition met (Found all 4 correct cards)
+            const correctFound = gameCards.filter(c => c.isCorrect && selectedGameCards.includes(c.id)).length;
+            if (correctFound === 4) {
+                appState.gameCompleted = true;
+                unlockNextStep(); // Unlock Reflection step!
+                showToast('Luar Biasa! Semua Karakter TM II Berhasil Ditemukan! 🎮⭐');
+                document.getElementById('gameStatusText').textContent = "✅ Selamat! Modul Refleksi Diri Terbuka.";
+            }
+        }
+
+        /* ---------------- STEP 5: REFLEKSI DIRI ---------------- */
+        function renderReflectionStep(container) {
+            container.innerHTML = `
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center gap-3 border-b pb-4">
+                        <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-face-smile"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading text-xl font-bold text-slate-800">Modul 6: Refleksi Diri Siswa</h3>
+                            <p class="text-xs sm:text-sm text-slate-500">Ungkapkan kesan dan pemahaman yang kamu dapatkan selama pembelajaran.</p>
+                        </div>
+                    </div>
+
+                    <!-- Mood Selection -->
+                    <div class="space-y-3">
+                        <label class="block font-heading font-bold text-slate-800 text-sm">
+                            1. Bagaimana perasaanmu setelah mempelajari materi Taruna Melati II hari ini?
+                        </label>
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <button onclick="setReflectionMood('senang')" id="mood-senang" class="flex-1 min-w-[100px] p-4 rounded-2xl border text-center transition flex flex-col items-center gap-1 ${appState.reflectionMood === 'senang' ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-300' : 'bg-slate-50 border-slate-200'}">
+                                <span class="text-3xl">😃</span>
+                                <span class="text-xs font-bold text-slate-700">Senang & Semangat</span>
+                            </button>
+                            <button onclick="setReflectionMood('paham')" id="mood-paham" class="flex-1 min-w-[100px] p-4 rounded-2xl border text-center transition flex flex-col items-center gap-1 ${appState.reflectionMood === 'paham' ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-300' : 'bg-slate-50 border-slate-200'}">
+                                <span class="text-3xl">💡</span>
+                                <span class="text-xs font-bold text-slate-700">Makin Paham</span>
+                            </button>
+                            <button onclick="setReflectionMood('terinspirasi')" id="mood-terinspirasi" class="flex-1 min-w-[100px] p-4 rounded-2xl border text-center transition flex flex-col items-center gap-1 ${appState.reflectionMood === 'terinspirasi' ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-300' : 'bg-slate-50 border-slate-200'}">
+                                <span class="text-3xl">🌟</span>
+                                <span class="text-xs font-bold text-slate-700">Terinspirasi</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Text Reflection -->
+                    <div class="space-y-3">
+                        <label class="block font-heading font-bold text-slate-800 text-sm">
+                            2. Tuliskan 1 hal paling berharga yang akan kamu terapkan sebagai pelajar Muhammadiyah:
+                        </label>
+                        <textarea id="reflectionTextInput" rows="3" 
+                                  placeholder="Contoh: Saya akan lebih aktif berdiskusi kritis dan menghargai pendapat teman..."
+                                  class="w-full text-xs sm:text-sm p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:outline-none transition">${appState.reflectionText}</textarea>
+                    </div>
+
+                    <div class="flex items-center justify-between border-t pt-4">
+                        <span class="text-xs text-slate-500 font-medium">Refleksi mendukung pembelajaran mendalam.</span>
+                        <button onclick="saveReflection()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl shadow transition text-xs sm:text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-check"></i> Simpan Refleksi & Buka Sertifikat
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setReflectionMood(mood) {
+            playSound('click');
+            appState.reflectionMood = mood;
+            renderReflectionStep(document.getElementById('stepContentContainer'));
+        }
+
+        function saveReflection() {
+            const text = document.getElementById('reflectionTextInput').value.trim();
+            if (text.length < 5) {
+                playSound('lock');
+                showToast('Harap tuliskan catatan refleksi singkatmu!', false);
+                return;
+            }
+
+            appState.reflectionText = text;
+            unlockNextStep(); // Unlock Evaluasi / Sertifikat
+            playSound('success');
+            showToast('Refleksi Tersimpan! Modul Evaluasi & Sertifikat Terbuka 🎓');
+            renderCurrentStep();
+        }
+
+        /* ---------------- STEP 6: EVALUASI & SERTIFIKAT ---------------- */
+        function renderEvaluasiStep(container) {
+            const passed = appState.quizScore >= 75;
+
+            // Record submission data into Teacher Recap state
+            const newRecord = {
+                studentName: appState.studentName,
+                quizScore: appState.quizScore,
+                gameScore: appState.gameScore,
+                passed: passed,
+                timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+            };
+            
+            if (!appState.recapList.some(r => r.studentName === appState.studentName)) {
+                appState.recapList.push(newRecord);
+                updateRecapTable();
+            }
+
+            if (passed) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            container.innerHTML = `
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center gap-3 border-b pb-4">
+                        <div class="w-12 h-12 bg-yellow-100 text-amber-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading text-xl font-bold text-slate-800">Modul 7: Evaluasi Selesai & Sertifikat Kelulusan</h3>
+                            <p class="text-xs sm:text-sm text-slate-500">Rekapitulasi pencapaian hasil belajar kamu di SPEMDA K-9.</p>
+                        </div>
+                    </div>
+
+                    <!-- Summary Score Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-2xl border text-center space-y-1">
+                            <span class="text-xs text-slate-500 font-medium">Nilai Kuis TKA</span>
+                            <div class="text-3xl font-heading font-bold ${passed ? 'text-emerald-600' : 'text-red-500'}">
+                                ${appState.quizScore} <span class="text-xs text-slate-400">/ 100</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border text-center space-y-1">
+                            <span class="text-xs text-slate-500 font-medium">Skor Mini-Game</span>
+                            <div class="text-3xl font-heading font-bold text-rose-500">
+                                ${appState.gameScore} <span class="text-xs text-slate-400">Poin</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border text-center space-y-1">
+                            <span class="text-xs text-slate-500 font-medium">Status Kelulusan</span>
+                            <div class="text-base font-heading font-bold mt-2 ${passed ? 'text-emerald-600' : 'text-amber-600'}">
+                                ${passed ? '✅ TERCAPAI (≥75)' : '⚠️ BELUM CUKUP (<75)'}
+                            </div>
+                        </div>
+                    </div>
+
+                    ${passed ? `
+                        <div class="space-y-4 text-center">
+                            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs sm:text-sm text-emerald-900">
+                                🎉 <strong>Selamat, ${appState.studentName}!</strong> Kamu telah menyelesaikan seluruh Alur Pembelajaran Mendalam Taruna Melati II dengan nilai melampaui KKM (75).
+                            </div>
+
+                            <!-- Certificate Canvas Visual Preview -->
+                            <div class="p-4 bg-slate-900 rounded-3xl overflow-hidden shadow-xl inline-block max-w-full">
+                                <canvas id="certificateCanvas" width="800" height="550" class="w-full max-w-2xl h-auto rounded-xl border border-slate-700"></canvas>
+                            </div>
+
+                            <div>
+                                <button onclick="downloadCertificate()" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold px-8 py-3 rounded-2xl shadow-lg transition text-sm flex items-center gap-2 mx-auto pulse-glow">
+                                    <i class="fa-solid fa-download"></i> Unduh Sertifikat Kelulusan (PNG)
+                                </button>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="p-6 bg-amber-50 border border-amber-200 rounded-3xl text-center space-y-4">
+                            <div class="w-16 h-16 bg-amber-200 text-amber-800 rounded-full flex items-center justify-center text-3xl mx-auto">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <h4 class="font-heading font-bold text-amber-900 text-lg">Nilai Kuis Kamu Belum Memenuhi Syarat Minimal 75</h4>
+                            <p class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+                                Untuk mengunduh Sertifikat Kelulusan Taruna Melati II, kamu perlu mendapatkan nilai minimal 75 pada kuis studi kasus.
+                            </p>
+                            <button onclick="appState.currentStep = 3; renderCurrentStep();" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2.5 rounded-xl shadow transition text-xs sm:text-sm inline-flex items-center gap-2">
+                                <i class="fa-solid fa-rotate-left"></i> Ulangi Kuis Sekarang
+                            </button>
+                        </div>
+                    `}
+                </div>
+            `;
+
+            if (passed) {
+                setTimeout(drawCertificateCanvas, 100);
+            }
+        }
+
+        function drawCertificateCanvas() {
+            const canvas = document.getElementById('certificateCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            // Background Gradient
+            const grad = ctx.createLinearGradient(0, 0, 800, 550);
+            grad.addColorStop(0, '#FFFFFF');
+            grad.addColorStop(1, '#FFF9E6');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 800, 550);
+
+            // Border Frame
+            ctx.strokeStyle = '#FF8008';
+            ctx.lineWidth = 12;
+            ctx.strokeRect(20, 20, 760, 510);
+
+            ctx.strokeStyle = '#FFC837';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(32, 32, 736, 486);
+
+            // School & Title Text
+            ctx.fillStyle = '#1E293B';
+            ctx.font = 'bold 20px Fredoka, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(appState.schoolName.toUpperCase(), 400, 75);
+
+            ctx.fillStyle = '#EAB308';
+            ctx.font = 'bold 30px Fredoka, sans-serif';
+            ctx.fillText('SERTIFIKAT KELULUSAN PEMBELAJARAN', 400, 120);
+
+            ctx.fillStyle = '#64748B';
+            ctx.font = '14px Plus Jakarta Sans, sans-serif';
+            ctx.fillText('Media Pembelajaran Interaktif "Ruang Belajar SPEMDA K-9"', 400, 145);
+
+            // Recipient
+            ctx.fillStyle = '#334155';
+            ctx.font = '15px Plus Jakarta Sans, sans-serif';
+            ctx.fillText('Diberikan Kepada Kader Muda:', 400, 200);
+
+            ctx.fillStyle = '#FF8008';
+            ctx.font = 'bold 32px Fredoka, sans-serif';
+            ctx.fillText(appState.studentName, 400, 245);
+
+            // Line under name
+            ctx.beginPath();
+            ctx.moveTo(250, 260);
+            ctx.lineTo(550, 260);
+            ctx.strokeStyle = '#CBD5E1';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Achievement Text
+            ctx.fillStyle = '#475569';
+            ctx.font = '14px Plus Jakarta Sans, sans-serif';
+            ctx.fillText('Telah berhasil menyelesaikan seluruh modul pembelajaran mendalam pada materi:', 400, 295);
+
+            ctx.fillStyle = '#0F172A';
+            ctx.font = 'bold 16px Plus Jakarta Sans, sans-serif';
+            ctx.fillText('Jenjang Pengkaderan Taruna Melati II - IPM', 400, 325);
+
+            ctx.fillStyle = '#16A34A';
+            ctx.font = 'bold 15px Plus Jakarta Sans, sans-serif';
+            ctx.fillText(`Nilai Kuis TKA: ${appState.quizScore} / 100 • Predikat: SANGAT BAIK`, 400, 360);
+
+            // Signatures Section
+            const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            ctx.fillStyle = '#64748B';
+            ctx.font = '13px Plus Jakarta Sans, sans-serif';
+            ctx.fillText(`Surabaya, ${today}`, 600, 420);
+
+            ctx.fillStyle = '#0F172A';
+            ctx.font = 'bold 15px Plus Jakarta Sans, sans-serif';
+            ctx.fillText(appState.teacherName, 600, 480);
+            ctx.font = '12px Plus Jakarta Sans, sans-serif';
+            ctx.fillText('Guru Pengampu Kemuhammadiyahan', 600, 498);
+
+            // Stamp Badge Simulation
+            ctx.beginPath();
+            ctx.arc(200, 450, 40, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FEF08A';
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#CA8A04';
+            ctx.stroke();
+
+            ctx.fillStyle = '#854D0E';
+            ctx.font = 'bold 12px Fredoka, sans-serif';
+            ctx.fillText('SPEMDA', 200, 445);
+            ctx.fillText('K-9 LULUS', 200, 460);
+        }
+
+        function downloadCertificate() {
+            const canvas = document.getElementById('certificateCanvas');
+            if (!canvas) return;
+            const imageURL = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = imageURL;
+            link.download = `Sertifikat_TM2_${appState.studentName.replace(/\s+/g, '_')}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Sertifikat Berhasil Diunduh! 🎓');
+        }
+
+        /* ---------------- TEACHER DASHBOARD LOGIC ---------------- */
+        function openTeacherModal() {
+            playSound('click');
+            document.getElementById('teacherModal').classList.remove('hidden');
+            document.getElementById('shareUrlInput').value = window.location.href;
+            renderTeacherQuizList();
+            updateRecapTable();
+        }
+
+        function closeTeacherModal() {
+            document.getElementById('teacherModal').classList.add('hidden');
+        }
+
+        function switchTeacherTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.teacher-tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('[id^="btn-"]').forEach(btn => {
+                btn.className = 'px-5 py-3 border-b-2 border-transparent text-slate-600 hover:text-slate-900';
+            });
+            document.getElementById(`btn-${tabId}`).className = 'px-5 py-3 border-b-2 border-orange-500 text-orange-600 bg-white';
+        }
+
+        function saveTeacherTP() {
+            const name = document.getElementById('editTeacherName').value.trim();
+            const school = document.getElementById('editSchoolName').value.trim();
+            const tpText = document.getElementById('editTPText').value.trim();
+
+            if (name) appState.teacherName = name;
+            if (school) appState.schoolName = school;
+
+            if (tpText) {
+                appState.tpList = tpText.split('\n').filter(t => t.trim().length > 0);
+            }
+
+            // Update UI displays
+            const tpContainer = document.getElementById('displayTPList');
+            if (tpContainer) {
+                tpContainer.innerHTML = appState.tpList.map(tp => `<li>${tp}</li>`).join('');
+            }
+
+            playSound('success');
+            showToast('Data Guru & Tujuan Pembelajaran Disimpan! ✨');
+            closeTeacherModal();
+        }
+
+        function renderTeacherQuizList() {
+            const container = document.getElementById('teacherQuizList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            quizQuestions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = 'bg-slate-50 p-3 rounded-xl border text-xs space-y-2';
+                item.innerHTML = `
+                    <div class="font-bold text-slate-800">Soal ${idx + 1}: ${q.type}</div>
+                    <p class="text-slate-600">${q.question}</p>
+                    <div class="text-emerald-700 font-semibold">Kunci: Option ${String.fromCharCode(65 + q.correctAnswer)}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateRecapTable() {
+            const tbody = document.getElementById('studentRecapTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (appState.recapList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Belum ada siswa yang menyelesaikan pembelajaran.</td></tr>`;
+                return;
+            }
+
+            appState.recapList.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-800">${r.studentName}</td>
+                    <td class="p-3 font-bold ${r.quizScore >= 75 ? 'text-emerald-600' : 'text-red-500'}">${r.quizScore}</td>
+                    <td class="p-3 text-rose-500 font-bold">${r.gameScore}</td>
+                    <td class="p-3 font-semibold">${r.passed ? '<span class="text-emerald-600">Lulus</span>' : '<span class="text-amber-600">Belum Lulus</span>'}</td>
+                    <td class="p-3 text-slate-400">${r.timestamp}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearStudentRecap() {
+            appState.recapList = [];
+            updateRecapTable();
+            showToast('Rekap Nilai Siswa Dibersihkan!');
+        }
+
+        function copyShareLink() {
+            const copyText = document.getElementById('shareUrlInput');
+            copyText.select();
+            document.execCommand('copy');
+            showToast('Link Pembelajaran Berhasil Disalin! 🔗');
+        }
+
+        // Initialize App on DOM Ready
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCurrentStep();
+        });
+    </script>
+</body>
+</html>
